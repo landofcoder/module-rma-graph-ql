@@ -1,0 +1,27 @@
+{
+    "name": "landofcoder/module-rma-graphql",
+    "description": "",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "email": "landofcoder@gmail.com",
+            "name": "LandOfCoder"
+        },
+        {
+            "email": "vanchinhpc9@gmail.com",
+            "name": "Nguyen Van Chinh"
+        }
+    ],
+    "require": {
+        "landofcoder/module-rma": "1.0.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lof\\RmaGraphQl\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

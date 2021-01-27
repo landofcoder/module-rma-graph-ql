@@ -1,0 +1,84 @@
+type StoreConfig {
+    rma: RmaConfiguration @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\RmaConfiguration") @doc(description: "Help Desk configuration.")
+}
+
+type RmaConfiguration {
+    return_address: String @doc(description: "return_address.")
+    is_active_frontend: String @doc(description: "is_active_frontend.")
+    default_status: String @doc(description: "default_status.")
+    default_user: String @doc(description: "default_user.")
+    enable_guest_rma: String @doc(description: "enable_guest_rma.")
+    is_gift_active: String @doc(description: "is_gift_active.")
+    file_allowed_extensions: String @doc(description: "file_allowed_extensions.")
+    file_size_limit: String @doc(description: "file_size_limit.")
+    is_require_shipping_confirmation: String @doc(description: "is_require_shipping_confirmation.")
+    shipping_confirmation_text: String @doc(description: "shipping_confirmation_text.")
+    enable_bundle_rma_fronend: String @doc(description: "enable_bundle_rma_fronend.")
+    enable_bundle_rma_backend: String @doc(description: "enable_bundle_rma_backend.")
+    use_both_rma_type: String @doc(description: "use_both_rma_type.")
+    return_period: String @doc(description: "return_period.")
+    allow_in_statuses: String @doc(description: "allow_in_statuses.")
+    return_only_shipped: String @doc(description: "return_only_shipped.")
+    is_active: String @doc(description: "is_active.")
+    sender_email: String @doc(description: "sender_email.")
+    customer_email_template: String @doc(description: "customer_email_template.")
+    admin_email_template: String @doc(description: "admin_email_template.")
+    rule_template: String @doc(description: "rule_template.")
+    send_email_bcc: String @doc(description: "send_email_bcc.")
+    enable_reason: String @doc(description: "enable_reason.")
+    enable_condition: String @doc(description: "enable_condition.")
+    enable_resolution: String @doc(description: "enable_resolution.")
+}
+
+type Query {
+
+    LofRmaById (
+        rma_id: String @doc(description: "Query by rma id.")
+    ) : Rma @resolver( class: "Lof\\RmaGraphQl\\Model\\Resolver\\Rma") @doc(description: "Get Rma by ID.")
+
+    LofRmaList(
+        search: String @doc(description: "Performs a full-text search using the specified key words."),
+        filter: RmaFilterInput @doc(description: "Identifies which product attributes to search for and return."),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+    ) : Rmas @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\Rmas") @doc(description: "The rmas query searches for rmas that match the criteria specified in the search and filter attributes")
+}
+
+
+type Rmas {
+    total_count: Int @doc(description: "The number of rmas returned")
+    items: [Rma] @doc(description: "An array of rmas that match the specified search criteria")
+}
+
+input RmaFilterInput {
+    rma_id  : FilterTypeInput  @doc(description: "rma_id.")
+    increment_id  : FilterTypeInput  @doc(description: "increment_id.")
+    return_address  : FilterTypeInput  @doc(description: "return_address.")
+    customer_id  : FilterTypeInput  @doc(description: "customer_id.")
+    status_id  : FilterTypeInput  @doc(description: "status_id.")
+    order_id  : FilterTypeInput  @doc(description: "order_id.")
+    created_at : FilterTypeInput  @doc(description: "created_at.")
+    updated_at : FilterTypeInput  @doc(description: "updated_at.")
+    user_id : FilterTypeInput  @doc(description: "user_id.")
+    store_id : FilterTypeInput  @doc(description: "store_id.")
+    or: ChatFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+}
+
+type Rma {
+    rma_id  : String  @doc(description: "rma_id.")
+    increment_id  : String  @doc(description: "increment_id.")
+    return_address  : String  @doc(description: "return_address.")
+    customer_id  : String  @doc(description: "customer_id.")
+    status_id  : String  @doc(description: "status_id.")
+    order_id  : String  @doc(description: "order_id.")
+    created_at : String  @doc(description: "created_at.")
+    updated_at : String  @doc(description: "updated_at.")
+    user_id : String  @doc(description: "user_id.")
+    store_id : String  @doc(description: "store_id.")
+    last_reply_name : String  @doc(description: "last_reply_name.")
+    last_reply_at : String  @doc(description: "last_reply_at.")
+    is_admin_read : String  @doc(description: "is_admin_read.")
+    parent_rma_id : String  @doc(description: "parent_rma_id.")
+    customer_email : String  @doc(description: "customer_email.")
+}
+
