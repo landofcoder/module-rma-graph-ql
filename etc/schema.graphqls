@@ -61,7 +61,7 @@ input RmaFilterInput {
     updated_at : FilterTypeInput  @doc(description: "updated_at.")
     user_id : FilterTypeInput  @doc(description: "user_id.")
     store_id : FilterTypeInput  @doc(description: "store_id.")
-    or: ChatFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+    or: RmaFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
 type Rma {
