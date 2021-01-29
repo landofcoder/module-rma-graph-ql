@@ -44,6 +44,49 @@ type Query {
     ) : Rmas @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\Rmas") @doc(description: "The rmas query searches for rmas that match the criteria specified in the search and filter attributes")
 }
 
+type Mutation {
+
+    LofRmaCreateRma(input: RmaInput!): Rma @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\CreateRma") @doc(description: "Create a new Rma")
+
+    LofRmaConfirmShipping(input: ConfirmInput!): Rma @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\ConfirmShipping") @doc(description: "Confirm Shipping")
+
+    LofRmaSendMessage(input: RmaMessageInput!): Rma @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\SendMessage") @doc(description: "Send Message")
+
+
+}
+
+input ConfirmInput {
+    rma_id  : String!  @doc(description: "rma_id.")
+    shipping_confirmation  : Boolean!  @doc(description: "shipping_confirmation.")
+}
+
+input RmaMessageInput {
+    rma_id  : String!  @doc(description: "rma_id.")
+    reply  : String!  @doc(description: "reply.")
+    attachment : Attachment @doc(description: "attachment")
+}
+
+input RmaInput {
+    order_id  : String!  @doc(description: "order_id.")
+    items  : [ItemInput]  @doc(description: "items.")
+    reply  :  String @doc(description: "reply")
+    attachment : Attachment  @doc(description: "attachment.")
+}
+
+input Attachment {
+    name  : String!  @doc(description: "name.")
+    type : String!  @doc(description: "type.")
+    size : String!  @doc(description: "size.")
+    body : String!  @doc(description: "body.")
+}
+
+input ItemInput {
+    qty_requested  : String!  @doc(description: "qty_request.")
+    reason_id : String!  @doc(description: "reason_id.")
+    condition_id : String!  @doc(description: "condition_id.")
+    resolution_id : String!  @doc(description: "resolution_id.")
+    order_item_id : String!  @doc(description: "order_item_id.")
+}
 
 type Rmas {
     total_count: Int @doc(description: "The number of rmas returned")
@@ -60,6 +103,10 @@ input RmaFilterInput {
     created_at : FilterTypeInput  @doc(description: "created_at.")
     updated_at : FilterTypeInput  @doc(description: "updated_at.")
     user_id : FilterTypeInput  @doc(description: "user_id.")
+    store_id : FilterTypeInput  @doc(description: "store_id.")
+    status : FilterTypeInput  @doc(description: "status.")
+    order_date : FilterTypeInput  @doc(description: "order_date.")
+    order_status : FilterTypeInput  @doc(description: "order_status.")
     store_id : FilterTypeInput  @doc(description: "store_id.")
     or: RmaFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
@@ -80,5 +127,54 @@ type Rma {
     is_admin_read : String  @doc(description: "is_admin_read.")
     parent_rma_id : String  @doc(description: "parent_rma_id.")
     customer_email : String  @doc(description: "customer_email.")
+    status : String  @doc(description: "status.")
+    order_date : String  @doc(description: "order_date.")
+    order_status : String  @doc(description: "order_status.")
+    shipping_address : String  @doc(description: "shipping_address.")
+    messages : [RmaMessage]  @doc(description: "message.")
+    items : [RmaItem]  @doc(description: "items.")
+}
+
+type RmaItem {
+    item_id  : String  @doc(description: "item_id.")
+    rma_id  : String  @doc(description: "rma_id.")
+    product_id  : String  @doc(description: "Order Item Id.")
+    reason_id  : String  @doc(description: "Reason Id.")
+    order_item_id  : String  @doc(description: "order_item_id.")
+    resolution_id  : String  @doc(description: "resolution_id.")
+    condition_id  : String  @doc(description: "condition_id.")
+    qty_requested : String  @doc(description: "qty_requested.")
+    qty_returned : String  @doc(description: "qty_returned.")
+    created_at : String  @doc(description: "created_at.")
+    updated_at : String  @doc(description: "updated_at.")
+    name : String  @doc(description: "name.")
+    to_stock : String  @doc(description: "to_stock.")
+    reason : String  @doc(description: "reason.")
+    resolution : String  @doc(description: "resolution.")
+    condition : String  @doc(description: "condition.")
+    product_name : String  @doc(description: "product_name.")
+    sku : String  @doc(description: "SKU.")
+    product_options : [Option]  @doc(description: "product_options.")
+}
+
+type RmaMessage {
+    message_id  : String  @doc(description: "message_id.")
+    rma_id  : String  @doc(description: "rma_id.")
+    user_id  : String  @doc(description: "Order Item Id.")
+    customer_id  : String  @doc(description: "customer_id.")
+    customer_name  : String  @doc(description: "customer_name.")
+    text  : String  @doc(description: "text.")
+    is_html  : String  @doc(description: "is_html.")
+    is_visible_in_frontend : String  @doc(description: "is_visible_in_frontend.")
+    is_customer_notified : String  @doc(description: "is_customer_notified.")
+    created_at : String  @doc(description: "created_at.")
+    updated_at : String  @doc(description: "updated_at.")
+    is_read : String  @doc(description: "is_read.")
+    customer_email : String  @doc(description: "customer_email.")
+}
+
+type Option {
+    value  : String  @doc(description: "value.")
+    label  : String  @doc(description: "label.")
 }
 
