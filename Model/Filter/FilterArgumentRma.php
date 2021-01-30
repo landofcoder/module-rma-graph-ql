@@ -36,7 +36,7 @@ class FilterArgumentRma implements FieldEntityAttributesInterface
         foreach ($this->config->getConfigElement('Rma')->getFields() as $field) {
             $fields[$field->getName()] = [
                 'type' => 'String',
-                'fieldName' => $field->getName(),
+                'fieldName' => 'main_table.'.$field->getName(),
             ];
         }
         return $fields;

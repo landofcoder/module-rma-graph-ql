@@ -251,6 +251,7 @@ class Rma
             $data['order_date'] = $order->getCreatedAt();
             $data['order_status'] = $order->getStatus();
             $data['shipping_address'] = $this->getAddress($order);
+            $data['order_increment_id'] = $order->getIncrementId();
         }
         $rmaStatus = $this->rmaStatus->load($data['status_id']);
         $data['status'] = $rmaStatus->getName();
@@ -455,6 +456,7 @@ class Rma
 
     public function createItems($itemdatas, $itemCollection, $rma)
     {
+        $itemData = [];
         foreach ($itemdatas as $item) {
             if (isset($item['reason_id']) && !(int)$item['reason_id']) {
                 unset($item['reason_id']);
@@ -477,9 +479,9 @@ class Rma
                 }
                 $item['product_id'] = $productId;
             }
-            $itemdatas[$item['order_item_id']] = $item;
+            $itemData[$item['order_item_id']] = $item;
         }
-        foreach ($itemdatas as $item) {
+        foreach ($itemData as $item) {
             $items = $this->itemFactory->create();
             if (isset($item['item_id']) && $item['item_id']) {
                 $items->load((int)$item['item_id']);

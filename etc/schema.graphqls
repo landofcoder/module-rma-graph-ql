@@ -42,6 +42,10 @@ type Query {
         pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
     ) : Rmas @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\Rmas") @doc(description: "The rmas query searches for rmas that match the criteria specified in the search and filter attributes")
+
+    LofOrderById(
+        order_id: String @doc(description: "Query by order_id")
+    ) : OrderById @resolver( class: "Lof\\RmaGraphQl\\Model\\Resolver\\Order") @doc(description: "Get Order by ID.")
 }
 
 type Mutation {
@@ -114,6 +118,7 @@ input RmaFilterInput {
 type Rma {
     rma_id  : String  @doc(description: "rma_id.")
     increment_id  : String  @doc(description: "increment_id.")
+    order_increment_id  : String  @doc(description: "order_increment_id.")
     return_address  : String  @doc(description: "return_address.")
     customer_id  : String  @doc(description: "customer_id.")
     status_id  : String  @doc(description: "status_id.")
@@ -138,7 +143,7 @@ type Rma {
 type RmaItem {
     item_id  : String  @doc(description: "item_id.")
     rma_id  : String  @doc(description: "rma_id.")
-    product_id  : String  @doc(description: "Order Item Id.")
+    product_id  : String  @doc(description: "Product Id.")
     reason_id  : String  @doc(description: "Reason Id.")
     order_item_id  : String  @doc(description: "order_item_id.")
     resolution_id  : String  @doc(description: "resolution_id.")
@@ -178,3 +183,24 @@ type Option {
     label  : String  @doc(description: "label.")
 }
 
+
+type OrderById @doc(description: "Contains details about each of the customer's orders") {
+    id: ID! @doc(description: "Unique identifier for the order")
+    order_date: String! @doc(description: "The date the order was placed")
+    status: String! @doc(description: "The current status of the order")
+    number: String! @doc(description: "The order number")
+    items: [OrderItemInterface] @doc(description: "An array containing the items purchased in this order") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\OrderItems")
+    invoices: [Invoice]! @doc(description: "A list of invoices for the order") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Invoices")
+    shipments: [OrderShipment] @doc(description: "A list of shipments for the order") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Shipments")
+    credit_memos: [CreditMemo] @doc(description: "A list of credit memos") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\CreditMemos")
+    payment_methods: [OrderPaymentMethod] @doc(description: "Payment details for the order")
+    shipping_address: OrderAddress @doc(description: "The shipping address for the order")
+    billing_address: OrderAddress @doc(description: "The billing address for the order")
+    carrier: String @doc(description: "The shipping carrier for the order delivery") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\CustomerOrders\\Carrier")
+    shipping_method: String @doc(description: "The delivery method for the order")
+    comments: [SalesCommentItem] @doc(description: "Comments about the order")
+    increment_id: String @deprecated(reason: "Use the id attribute instead")
+    order_number: String! @deprecated(reason: "Use the number attribute instead")
+    created_at: String @deprecated(reason: "Use the order_date attribute instead")
+    grand_total: Float  @deprecated(reason: "Use the totals.grand_total attribute instead")
+}
