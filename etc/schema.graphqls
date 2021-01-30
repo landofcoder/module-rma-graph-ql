@@ -1,5 +1,5 @@
 type StoreConfig {
-    rma: RmaConfiguration @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\RmaConfiguration") @doc(description: "Help Desk configuration.")
+    rma: RmaConfiguration @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\RmaConfiguration") @doc(description: "Rma configuration.")
 }
 
 type RmaConfiguration {
@@ -43,9 +43,18 @@ type Query {
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
     ) : Rmas @resolver(class: "\\Lof\\RmaGraphQl\\Model\\Resolver\\Rmas") @doc(description: "The rmas query searches for rmas that match the criteria specified in the search and filter attributes")
 
-    LofOrderById(
+    LofRmaOrderById(
         order_id: String @doc(description: "Query by order_id")
     ) : OrderById @resolver( class: "Lof\\RmaGraphQl\\Model\\Resolver\\Order") @doc(description: "Get Order by ID.")
+
+    LofRmaOrders(
+        search: String @doc(description: "Performs a full-text search using the specified key words."),
+        filter: OrderFilterInput @doc(description: "Identifies which product attributes to search for and return."),
+        sort: OrderSortInput @doc(description: "Identifies which order attributes to sort."),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+    ) : Orders @resolver( class: "Lof\\RmaGraphQl\\Model\\Resolver\\Orders") @doc(description: "Get Order by ID.")
+
 }
 
 type Mutation {
@@ -115,6 +124,13 @@ input RmaFilterInput {
     or: RmaFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
+input OrderFilterInput {
+    entity_id  : FilterTypeInput  @doc(description: "order id.")
+    created_at: FilterTypeInput  @doc(description: "created at.")
+    updated_at: FilterTypeInput  @doc(description: "updated at.")
+    or: OrderFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+}
+
 type Rma {
     rma_id  : String  @doc(description: "rma_id.")
     increment_id  : String  @doc(description: "increment_id.")
@@ -178,14 +194,18 @@ type RmaMessage {
     customer_email : String  @doc(description: "customer_email.")
 }
 
+type Orders {
+    total_count: Int @doc(description: "The number of orders returned")
+    items: [OrderById] @doc(description: "An array of orders that match the specified search criteria")
+}
+
 type Option {
     value  : String  @doc(description: "value.")
     label  : String  @doc(description: "label.")
 }
 
-
 type OrderById @doc(description: "Contains details about each of the customer's orders") {
-    id: ID! @doc(description: "Unique identifier for the order")
+    entity_id: ID! @doc(description: "Unique identifier for the order")
     order_date: String! @doc(description: "The date the order was placed")
     status: String! @doc(description: "The current status of the order")
     number: String! @doc(description: "The order number")
@@ -203,4 +223,9 @@ type OrderById @doc(description: "Contains details about each of the customer's 
     order_number: String! @deprecated(reason: "Use the number attribute instead")
     created_at: String @deprecated(reason: "Use the order_date attribute instead")
     grand_total: Float  @deprecated(reason: "Use the totals.grand_total attribute instead")
+}
+
+input OrderSortInput {
+    created_at: SortEnum @doc(description: "Sort by created_at.")
+    entity_id: SortEnum @doc(description: "Sort by order_id.")
 }
