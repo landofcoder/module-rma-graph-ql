@@ -10,6 +10,7 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Sales\Model\Order;
 
 /**
  * Class CreateRma
@@ -26,18 +27,25 @@ class CreateRma implements ResolverInterface
      * @var GetCustomer
      */
     private $getCustomer;
+    /**
+     * @var Order
+     */
+    private $order;
 
     /**
      * CreateRma constructor.
      * @param DataProvider\Rma $rma
      * @param GetCustomer $getCustomer
+     * @param Order $order
      */
     public function __construct(
         DataProvider\Rma $rma,
-        GetCustomer $getCustomer
+        GetCustomer $getCustomer,
+        Order $order
     ) {
         $this->rmaProvider = $rma;
         $this->getCustomer = $getCustomer;
+        $this->order = $order;
     }
 
     /**
@@ -50,19 +58,30 @@ class CreateRma implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+
         /** @var ContextInterface $context */
         if (!$context->getExtensionAttributes()->getIsCustomer()) {
             throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
+
         $args = $args['input'];
-        if (!($args['rma_id']) || !isset($args['rma_id'])) {
-            throw new GraphQlInputException(__('"rma_id" can\'t be empty.'));
-        }
 
         $customer = $this->getCustomer->execute($context);
-        $args['customer_id'] = $customer->getId();
-        $args['customer_name'] = $customer->getFirstname().' '.$customer->getLastname();
-        $args['customer_email'] = $customer->getEmail();
+        if (!($args['order_id']) || !isset($args['order_id'])) {
+            throw new GraphQlInputException(__('"order_id" can\'t be empty.'));
+        }
+
+        if (!($args['items']) || !isset($args['items'])) {
+            throw new GraphQlInputException(__('"Items" can\'t be empty.'));
+        }
+
+        $order = $this->order->load($args['order_id']);
+
+        if ($order->getCustomerId() != $customer->getId()) {
+            throw new GraphQlAuthorizationException(__('You don\'t have permission to return this order.'));
+        }
+
+        $args['customer_id'] = $order->getCustomerId();
         return $this->rmaProvider->createRma($args);
     }
 

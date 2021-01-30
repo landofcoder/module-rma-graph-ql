@@ -1,25 +1,23 @@
 <?php
-/**
- * Copyright © LandOfCoder All rights reserved.
- * See COPYING.txt for license details.
- */
 declare(strict_types=1);
 
 namespace Lof\RmaGraphQl\Model\Resolver;
 
-use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Lof\Rma\Model\RmaFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Sales\Model\Order;
 
 /**
- * Class Rma
+ * Class SendMessage
  * @package Lof\RmaGraphQl\Model\Resolver
  */
-class Rma implements ResolverInterface
+class SendMessage implements ResolverInterface
 {
 
     /**
@@ -27,28 +25,28 @@ class Rma implements ResolverInterface
      */
     private $rmaProvider;
     /**
-     * @var \Lof\Rma\Model\Rma
-     */
-    private $rmaModel;
-    /**
      * @var GetCustomer
      */
     private $getCustomer;
+    /**
+     * @var RmaFactory
+     */
+    private $rmaFactory;
 
     /**
-     * @param DataProvider\Rma $RmaRepository
-     * @param \Lof\Rma\Model\Rma $rma
+     * CreateRma constructor.
+     * @param DataProvider\Rma $rma
      * @param GetCustomer $getCustomer
+     * @param RmaFactory $rmaFactory
      */
     public function __construct(
-        DataProvider\Rma $RmaRepository,
-        \Lof\Rma\Model\Rma $rma,
-        GetCustomer $getCustomer
-
+        DataProvider\Rma $rma,
+        GetCustomer $getCustomer,
+        RmaFactory $rmaFactory
     ) {
-        $this->rmaProvider = $RmaRepository;
-        $this->rmaModel = $rma;
+        $this->rmaProvider = $rma;
         $this->getCustomer = $getCustomer;
+        $this->rmaFactory = $rmaFactory;
     }
 
     /**
@@ -61,18 +59,26 @@ class Rma implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+
         /** @var ContextInterface $context */
         if (!$context->getExtensionAttributes()->getIsCustomer()) {
             throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
-        if (!($args['rma_id']) || !isset($args['rma_id'])) {
-            throw new GraphQlInputException(__('"rma_id" value can\'t be empty'));
-        }
-        $customer = $this->getCustomer->execute($context);
-        if ($this->rmaModel->load($args['rma_id'])->getCustomerId() != $customer->getId()) {
-            throw new GraphQlAuthorizationException(__('You have no permission to view this Rma.'));
-        }
-        return $this->rmaProvider->getRmaById($args['rma_id']);
-    }
-}
 
+        $args = $args['input'];
+
+        $customer = $this->getCustomer->execute($context);
+
+        $rma = $this->rmaFactory->create()->load($args['rma_id']);
+
+        if ($rma->getCustomerId() != $customer->getId()) {
+            throw new GraphQlAuthorizationException(__('You don\'t have permission to send message for this rma.'));
+        }
+        $args['customer_name'] = $customer->getFirstname().' '.$customer->getLastname();
+        $args['customer_id'] = $customer->getId();
+
+        return $this->rmaProvider->ConfirmShipping($args);
+    }
+
+
+}

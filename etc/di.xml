@@ -8,4 +8,15 @@
         </arguments>
     </type>
 
+    <type name="Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesPool">
+        <arguments>
+            <argument name="attributesInstances" xsi:type="array">
+                <item name="lof_rma_order" xsi:type="object">\Lof\RmaGraphQl\Model\Filter\FilterArgumentOrder</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <preference for="Lof\RmaGraphQl\Api\OrderRepositoryInterface" type="Lof\RmaGraphQl\Model\OrderRepository"/>
+    <preference for="Lof\RmaGraphQl\Api\Data\OrderSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
 </config>

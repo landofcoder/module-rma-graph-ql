@@ -13,10 +13,11 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Lof\RmaGraphQl\Api\OrderRepositoryInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder as SearchCriteriaBuilder;
 use Magento\GraphQl\Model\Query\ContextInterface;
 
-class Rmas implements ResolverInterface
+class Orders implements ResolverInterface
 {
 
     /**
@@ -24,24 +25,24 @@ class Rmas implements ResolverInterface
      */
     private $searchCriteriaBuilder;
     /**
-     * @var DataProvider\Rma
+     * @var OrderRepositoryInterface
      */
-    private $rmaProvider;
+    private $orderManagement;
     /**
      * @var GetCustomer
      */
     private $getCustomer;
 
     public function __construct(
-        DataProvider\Rma $RmaRepository,
+        OrderRepositoryInterface $orderManagement,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         GetCustomer $getCustomer
-
     )
     {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->rmaProvider = $RmaRepository;
+        $this->orderManagement = $orderManagement;
         $this->getCustomer = $getCustomer;
+
     }
 
     /**
@@ -54,24 +55,25 @@ class Rmas implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        /** @var ContextInterface $context */
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
         if ($args['currentPage'] < 1) {
             throw new GraphQlInputException(__('currentPage value must be greater than 0.'));
         }
+
         if ($args['pageSize'] < 1) {
             throw new GraphQlInputException(__('pageSize value must be greater than 0.'));
         }
 
-        if (!$context->getExtensionAttributes()->getIsCustomer()) {
-            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
-        }
-
-        $customerId = $this->getCustomer->execute($context)->getId();
-
-        $searchCriteria = $this->searchCriteriaBuilder->build( 'lof_rma_rma', $args );
+        $searchCriteria = $this->searchCriteriaBuilder->build( 'lof_rma_order', $args );
         $searchCriteria->setCurrentPage( $args['currentPage'] );
         $searchCriteria->setPageSize( $args['pageSize'] );
+        $customer = $this->getCustomer->execute($context);
 
-        $searchResult = $this->rmaProvider->getListRmas( $searchCriteria , $customerId);
+        $searchResult = $this->orderManagement->getListOrders( $searchCriteria , $customer->getId());
 
         return [
             'total_count' => $searchResult->getTotalCount(),

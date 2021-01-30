@@ -12,7 +12,7 @@ use Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesInter
  * Class FilterArgumentRma
  * @package Lof\RmaGraphQl\Model\Resolver
  */
-class FilterArgumentRma implements FieldEntityAttributesInterface
+class FilterArgumentOrder implements FieldEntityAttributesInterface
 {
     /** @var ConfigInterface */
     private $config;
@@ -33,7 +33,7 @@ class FilterArgumentRma implements FieldEntityAttributesInterface
     {
         $fields = [];
         /** @var Field $field */
-        foreach ($this->config->getConfigElement('Rma')->getFields() as $field) {
+        foreach ($this->config->getConfigElement('OrderById')->getFields() as $field) {
             $fields[$field->getName()] = [
                 'type' => 'String',
                 'fieldName' => 'main_table.'.$field->getName(),
