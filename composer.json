@@ -1,6 +1,6 @@
 {
     "name": "landofcoder/module-rma-graph-ql",
-    "description": "",
+    "description": "Graph QL support for Magento 2 RMA extension.",
     "type": "magento2-module",
     "license": "OSL-3.0",
     "authors": [
@@ -13,8 +13,9 @@
             "name": "Nguyen Van Chinh"
         }
     ],
+    "version": "1.0.0",
     "require": {
-        "landofcoder/module-rma": "1.0.10"
+        "landofcoder/module-rma": "1.*"
     },
     "autoload": {
         "psr-4": {

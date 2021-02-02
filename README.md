@@ -1,16 +1,12 @@
 # Magento 2 Module Lof RmaGraphQl
 
-    ``lof/module-rma-graphql``
+    ``landofcoder/module-rma-graph-ql``
 
  - [Main Functionalities](#markdown-header-main-functionalities)
  - [Installation](#markdown-header-installation)
- - [Configuration](#markdown-header-configuration)
- - [Specifications](#markdown-header-specifications)
- - [Attributes](#markdown-header-attributes)
-
 
 ## Main Functionalities
-
+Graph QL supports for Magento 2 RMA extension.
 
 ## Installation
 \* = in production please use the `--keep-generated` option
@@ -29,19 +25,7 @@
     - public repository `packagist.org`
     - public github repository as vcs
  - Add the composer repository to the configuration by running `composer config repositories.repo.magento.com composer https://repo.magento.com/`
- - Install the module composer by running `composer require lof/module-rmagraphql`
+ - Install the module composer by running `composer require landofcoder/module-rma-graph-ql`
  - enable the module by running `php bin/magento module:enable Lof_RmaGraphQl`
  - apply database updates by running `php bin/magento setup:upgrade`\*
  - Flush the cache by running `php bin/magento cache:flush`
-
-
-## Configuration
-
-
-## Specifications
-
-
-## Attributes
-
-
-
