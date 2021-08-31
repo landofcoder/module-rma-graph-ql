@@ -15,7 +15,6 @@
     ],
     "version": "1.0.0",
     "require": {
-        "landofcoder/module-rma": "1.*"
     },
     "autoload": {
         "psr-4": {
